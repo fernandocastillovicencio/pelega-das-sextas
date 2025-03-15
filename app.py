@@ -1,7 +1,8 @@
-import streamlit as st
-import sqlite3
-import pandas as pd
 import os
+import sqlite3
+
+import pandas as pd
+import streamlit as st
 
 # 📌 Definir caminho do banco de dados na pasta 'data'
 db_path = "data/dados.db"
@@ -12,15 +13,17 @@ def carregar_dados():
     cursor = conn.cursor()
 
     # 📌 Carregar ranking completo
-    cursor.execute("SELECT * FROM rankings ORDER BY pontos DESC, gols DESC")
+    cursor.execute("SELECT * FROM rankings")
     rankings = cursor.fetchall()
 
     conn.close()
     return rankings
 
+
 # 📌 Atualizar Ranking Automaticamente
 def atualizar_ranking():
     os.system("python atualizar_rankings.py")
+
 
 # 📌 Interface do Streamlit
 st.title("⚽ Gestão da Pelada")
@@ -33,15 +36,24 @@ if st.button("🔄 Atualizar Rankings"):
 # 📌 Carregar dados do ranking
 rankings = carregar_dados()
 
-# 📌 Exibir Ranking de Artilheiros (Somente quem marcou gols)
+# Cria DataFrame com nomes de colunas adequados
+df = pd.DataFrame(
+    rankings, columns=["Jogador", "Vitórias", "Empates", "Derrotas", "Pontos", "Gols"]
+)
+
+# 📌 Exibir Ranking de Artilheiros (AGORA TODOS OS JOGADORES)
 st.subheader("🏆 Ranking de Artilheiros")
-df_artilheiros = pd.DataFrame(rankings, columns=["Jogador", "Vitórias", "Empates", "Derrotas", "Pontos", "Gols"])
-df_artilheiros = df_artilheiros[df_artilheiros["Gols"] > 0].sort_values(by="Gols", ascending=False)  # Apenas jogadores com gols
+df_artilheiros = df.sort_values(by="Gols", ascending=False)
 st.table(df_artilheiros[["Jogador", "Gols"]])
 
-# 📌 Exibir Ranking de Pontos (Todos os jogadores, ordenado por pontos)
+# 📌 Exibir Ranking de Pontos (Ordenado por pontos e depois por gols)
 st.subheader("📊 Ranking de Pontos e V/E/D")
-df_pontos = pd.DataFrame(rankings, columns=["Jogador", "Vitórias", "Empates", "Derrotas", "Pontos", "Gols"])
-df_pontos = df_pontos.sort_values(by="Pontos", ascending=False)
-df_pontos["V/E/D"] = df_pontos["Vitórias"].astype(str) + "/" + df_pontos["Empates"].astype(str) + "/" + df_pontos["Derrotas"].astype(str)
+df_pontos = df.sort_values(by=["Pontos", "Gols"], ascending=False)
+df_pontos["V/E/D"] = (
+    df_pontos["Vitórias"].astype(str)
+    + "/"
+    + df_pontos["Empates"].astype(str)
+    + "/"
+    + df_pontos["Derrotas"].astype(str)
+)
 st.table(df_pontos[["Jogador", "Pontos", "V/E/D"]])
