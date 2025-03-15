@@ -1,63 +1,36 @@
 # ---------------------------------------------------------------------------- #
-data: 15/03/2025
-
-times: 2
----
-# Time 1 - Vermelho
-rafael (3)
-joarez
-jhonny (2)
-pedrow
-julianor (1)
-tiago
----
-# Time 2 - Azul
-juarez
-luan
-andre (2)
-pedroc
-fernandoc (1)
-amir
----
-
-jogos:
-vermelho 6 - azul 3
-
-
-
-# ---------------------------------------------------------------------------- #
-data: 22/03/2025
+data: 14/03/2025
 
 times: 3
 ---
 # Time 1 - Vermelho
-rafael (2)
+rafael
 joarez
-jhonny (3)
-pedrow
+jhonny (2)
+pedrow (1)
 julianor
-tiago
+tiago (1)
 ---
 # Time 2 - Azul
 juarez
-luan
+luan (1)
 andre (1)
-pedroc
-fernandoc (2)
-amir
+pedroc (2)
+fernandoc
+amir (1)
 ---
 # Time 3 - Verde
-albert (1)
+albert
 dudu
 vinicius
-bill (2)
-vitor
+bill (1)
+vitor (2)
 ---
 
 jogos:
-azul 3 - vermelho 6
-verde 0 - vermelho 0
-verde 0 - azul 2
-vermelho 1 - azul 1
-vermelho 1 - verde 1
-azul 0 - verde 2
+azul 1 - vermelho 2
+verde 0 - vermelho 2
+verde 2 - azul 3
+vermelho 0 - azul 0
+vermelho 1 - verde 0 
+azul 2 - verde 0
