@@ -46,8 +46,17 @@ def exibir_tabela_estilizada(df, colunas, titulo):
     📌 Converte DataFrame para HTML estilizado e exibe no Streamlit.
     """
     df_html = df[colunas].to_html(index=False, escape=False)
+
+    # 📌 Ajuste para responsividade
     st.subheader(titulo)
-    st.markdown(df_html, unsafe_allow_html=True)
+    st.markdown(
+        f"""
+        <div style="overflow-x: auto; width: 100%;">
+            {df_html}
+        </div>
+    """,
+        unsafe_allow_html=True,
+    )
 
 
 def exibir_ranking(df):
@@ -65,9 +74,7 @@ def exibir_ranking(df):
     if df_artilheiros.empty:
         st.info("Nenhum jogador marcou gols ainda.")
     else:
-        exibir_tabela_estilizada(
-            df_artilheiros, ["Jogador", "Gols"], "🏆 Ranking de Artilheiros"
-        )
+        exibir_tabela_estilizada(df_artilheiros, ["Jogador", "Gols"], "⚽ Artilharia")
 
     # 📌 Ranking de Pontos
     df_pontos = df.sort_values(by=["Pontos", "Vitórias", "Gols"], ascending=False)
@@ -79,13 +86,25 @@ def exibir_ranking(df):
         + df_pontos["Derrotas"].astype(str)
     )
 
-    exibir_tabela_estilizada(
-        df_pontos, ["Jogador", "Pontos", "V/E/D"], "📊 Ranking de Pontos e V/E/D"
+    exibir_tabela_estilizada(df_pontos, ["Jogador", "Pontos", "V/E/D"], "📊 Pontos")
+
+    # nota:
+    st.markdown(
+        """
+    <div style="font-size: 14px;">
+        <b>NOTA - pontos para V/E/D:</b><br>
+        <div style="margin-left: 20px;">
+            Jogos com 2 times: <b>3/1/0</b> pontos.<br>
+            Jogos com 3 times: <b>1/0/0</b> pontos.
+        </div>
+    </div>
+    """,
+        unsafe_allow_html=True,
     )
 
 
 # 📌 Interface do Streamlit
-st.title("⚽ Estatísticas da Pelada")
+st.title("🏆  Estatísticas da Pelega de Sextas")
 
 # 📌 Carregar estilo CSS
 carregar_estilo()

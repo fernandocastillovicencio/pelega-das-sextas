@@ -25,8 +25,22 @@ tr:hover {
   background-color: #ddd;
 }
 
-/* Ajuste para evitar colapsos de formatação */
-.stMarkdown {
-  overflow-x: auto;
-  padding: 10px;
+/* 📌 Responsividade para telas pequenas */
+@media screen and (max-width: 600px) {
+  table {
+    width: 100%;
+    font-size: 12px; /* Reduzir fonte para melhor encaixe */
+  }
+
+  th,
+  td {
+    padding: 6px;
+  }
+
+  /* Forçar rolagem horizontal */
+  .stMarkdown {
+    overflow-x: auto;
+    display: block;
+    white-space: nowrap;
+  }
 }
