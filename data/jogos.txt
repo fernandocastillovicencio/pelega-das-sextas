@@ -1,0 +1,64 @@
+# ---------------------------------------------------------------------------- #
+# 📅 Data do Jogo
+15/03/2025
+
+# 🏆 Times e Jogadores
+---
+Time 1 - Vermelho
+rafael (3)
+joarez
+jhonny (2)
+pedrow
+julianor
+tiago
+---
+Time 2 - Azul
+juarez
+luan
+andre (2)
+pedroc
+fernandoc (1)
+amir
+---
+
+# 🎮 JOGOS e RESULTADOS
+vermelho 6 - azul 3
+
+
+# ---------------------------------------------------------------------------- #
+# 📅 Data do Jogo
+22/03/2025
+
+# 🏆 Times e Jogadores
+---
+Time 1 - Vermelho
+rafael (2)
+joarez
+jhonny (3)
+pedrow
+julianor
+tiago
+---
+Time 2 - Azul
+juarez
+luan
+andre (1)
+pedroc
+fernandoc (2)
+amir
+---
+Time 3 - Verde
+albert (1)
+dudu
+vinicius
+bill (2)
+vitor
+---
+
+# 🎮 JOGOS e RESULTADOS
+azul 3 - vermelho 6
+verde 0 - vermelho 0
+verde 0 - azul 2
+vermelho 1 - azul 1
+vermelho 1 - Verde 1
+azul 0 - Verde 2
