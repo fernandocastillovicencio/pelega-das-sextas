@@ -3,97 +3,95 @@ import sqlite3
 import pandas as pd
 import streamlit as st
 
-# 📌 Definir caminho do banco de dados
+# 📌 Definir caminho do banco de dados e CSS
 db_path = "data/dados.db"
+css_path = "styles.css"
+
+
+def carregar_estilo():
+    """
+    📌 Carrega o arquivo CSS para estilizar as tabelas no Streamlit.
+    """
+    with open(css_path, "r") as f:
+        css = f"<style>{f.read()}</style>"
+    st.markdown(css, unsafe_allow_html=True)
 
 
 def carregar_ranking():
     """
-    📌 Carrega os rankings dos jogadores do banco de dados e corrige os nomes das colunas, se necessário.
+    📌 Carrega os rankings dos jogadores do banco de dados.
     """
     conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
-
-    # 📌 Verifica se a tabela rankings existe
-    cursor.execute(
-        "SELECT name FROM sqlite_master WHERE type='table' AND name='rankings'"
-    )
-    if not cursor.fetchone():
-        st.warning(
-            "⚠️ A tabela de rankings ainda não foi criada. Execute o processamento de jogos primeiro."
-        )
-        return None
-
-    # 📌 Carregar dados dos rankings
     df = pd.read_sql_query("SELECT * FROM rankings", conn)
     conn.close()
 
-    # 📌 Exibir os nomes reais das colunas para depuração
-    st.write("Colunas do DataFrame:", df.columns.tolist())
-
-    # 📌 Ajuste de nomes de colunas caso necessário
-    colunas_esperadas = ["Jogador", "Gols", "Pontos", "Vitórias", "Empates", "Derrotas"]
-    mapeamento = {
-        "jogador": "Jogador",
-        "gols": "Gols",
-        "pontos": "Pontos",
-        "vitorias": "Vitórias",
-        "empates": "Empates",
-        "derrotas": "Derrotas",
-    }
-
-    # 📌 Renomear colunas se forem diferentes
-    df.rename(columns=mapeamento, inplace=True)
-
-    # 📌 Verificar novamente se as colunas esperadas estão presentes
-    for col in colunas_esperadas:
-        if col not in df.columns:
-            st.error(f"🚨 Erro: Coluna '{col}' não encontrada no banco de dados.")
-            return None
+    # 📌 Renomear colunas para exibição correta
+    df.rename(
+        columns={
+            "jogador": "Jogador",
+            "gols": "Gols",
+            "pontos": "Pontos",
+            "vitorias": "Vitórias",
+            "empates": "Empates",
+            "derrotas": "Derrotas",
+        },
+        inplace=True,
+    )
 
     return df if not df.empty else None
 
 
+def exibir_tabela_estilizada(df, colunas, titulo):
+    """
+    📌 Converte DataFrame para HTML estilizado e exibe no Streamlit.
+    """
+    df_html = df[colunas].to_html(index=False, escape=False)
+    st.subheader(titulo)
+    st.markdown(df_html, unsafe_allow_html=True)
+
+
 def exibir_ranking(df):
     """
-    📌 Exibe o ranking de artilheiros e o ranking de pontos no Streamlit.
+    📌 Exibe os rankings de artilheiros e pontos de forma estilizada.
     """
-    if "Gols" in df.columns and "Pontos" in df.columns:
-        # 📌 Exibir Ranking de Artilheiros (Apenas jogadores com gols > 0)
-        st.subheader("🏆 Ranking de Artilheiros")
-        df_artilheiros = df[df["Gols"] > 0].sort_values(by="Gols", ascending=False)
+    if df is None:
+        st.warning(
+            "⚠️ Nenhuma estatística disponível. Execute o processamento de jogos primeiro."
+        )
+        return
 
-        if df_artilheiros.empty:
-            st.info("Nenhum jogador marcou gols ainda.")
-        else:
-            st.table(df_artilheiros[["Jogador", "Gols"]])
-
-        # 📌 Exibir Ranking de Pontos (Ordenado por pontos, vitórias e depois gols)
-        st.subheader("📊 Ranking de Pontos e V/E/D")
-        df_pontos = df.sort_values(by=["Pontos", "Vitórias", "Gols"], ascending=False)
-        df_pontos["V/E/D"] = (
-            df_pontos["Vitórias"].astype(str)
-            + "/"
-            + df_pontos["Empates"].astype(str)
-            + "/"
-            + df_pontos["Derrotas"].astype(str)
+    # 📌 Ranking de Artilheiros
+    df_artilheiros = df[df["Gols"] > 0].sort_values(by="Gols", ascending=False)
+    if df_artilheiros.empty:
+        st.info("Nenhum jogador marcou gols ainda.")
+    else:
+        exibir_tabela_estilizada(
+            df_artilheiros, ["Jogador", "Gols"], "🏆 Ranking de Artilheiros"
         )
 
-        st.table(df_pontos[["Jogador", "Pontos", "V/E/D"]])
-    else:
-        st.error("🚨 Erro: Colunas esperadas não encontradas no DataFrame.")
+    # 📌 Ranking de Pontos
+    df_pontos = df.sort_values(by=["Pontos", "Vitórias", "Gols"], ascending=False)
+    df_pontos["V/E/D"] = (
+        df_pontos["Vitórias"].astype(str)
+        + "/"
+        + df_pontos["Empates"].astype(str)
+        + "/"
+        + df_pontos["Derrotas"].astype(str)
+    )
+
+    exibir_tabela_estilizada(
+        df_pontos, ["Jogador", "Pontos", "V/E/D"], "📊 Ranking de Pontos e V/E/D"
+    )
 
 
 # 📌 Interface do Streamlit
 st.title("⚽ Estatísticas da Pelada")
 
+# 📌 Carregar estilo CSS
+carregar_estilo()
+
 # 📌 Carregar ranking do banco de dados
 df = carregar_ranking()
 
 # 📌 Exibir os rankings apenas se houver dados
-if df is not None:
-    exibir_ranking(df)
-else:
-    st.warning(
-        "📌 Nenhuma estatística disponível. Execute o processamento de jogos primeiro."
-    )
+exibir_ranking(df)
