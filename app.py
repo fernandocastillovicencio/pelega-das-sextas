@@ -3,17 +3,14 @@ import sqlite3
 import pandas as pd
 import streamlit as st
 
-from processar_jogos import (
-    atualizar_gols_jogadores,
-    atualizar_pontos_jogadores,
-    processar_dados,
-)
-
-# 📌 Definir caminho do banco de dados na pasta 'data'
+# 📌 Definir caminho do banco de dados
 db_path = "data/dados.db"
 
-# 📌 Função para carregar dados do ranking
-def carregar_dados():
+
+def carregar_ranking():
+    """
+    📌 Carrega os rankings dos jogadores do banco de dados e corrige os nomes das colunas, se necessário.
+    """
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
@@ -27,58 +24,76 @@ def carregar_dados():
         )
         return None
 
-    # 📌 Carregar ranking completo
-    cursor.execute("SELECT * FROM rankings")
-    rankings = cursor.fetchall()
-
+    # 📌 Carregar dados dos rankings
+    df = pd.read_sql_query("SELECT * FROM rankings", conn)
     conn.close()
 
-    # Retorna DataFrame ou None se não houver dados
-    if rankings:
-        return pd.DataFrame(
-            rankings,
-            columns=["Jogador", "Vitórias", "Empates", "Derrotas", "Pontos", "Gols"],
+    # 📌 Exibir os nomes reais das colunas para depuração
+    st.write("Colunas do DataFrame:", df.columns.tolist())
+
+    # 📌 Ajuste de nomes de colunas caso necessário
+    colunas_esperadas = ["Jogador", "Gols", "Pontos", "Vitórias", "Empates", "Derrotas"]
+    mapeamento = {
+        "jogador": "Jogador",
+        "gols": "Gols",
+        "pontos": "Pontos",
+        "vitorias": "Vitórias",
+        "empates": "Empates",
+        "derrotas": "Derrotas",
+    }
+
+    # 📌 Renomear colunas se forem diferentes
+    df.rename(columns=mapeamento, inplace=True)
+
+    # 📌 Verificar novamente se as colunas esperadas estão presentes
+    for col in colunas_esperadas:
+        if col not in df.columns:
+            st.error(f"🚨 Erro: Coluna '{col}' não encontrada no banco de dados.")
+            return None
+
+    return df if not df.empty else None
+
+
+def exibir_ranking(df):
+    """
+    📌 Exibe o ranking de artilheiros e o ranking de pontos no Streamlit.
+    """
+    if "Gols" in df.columns and "Pontos" in df.columns:
+        # 📌 Exibir Ranking de Artilheiros (Apenas jogadores com gols > 0)
+        st.subheader("🏆 Ranking de Artilheiros")
+        df_artilheiros = df[df["Gols"] > 0].sort_values(by="Gols", ascending=False)
+
+        if df_artilheiros.empty:
+            st.info("Nenhum jogador marcou gols ainda.")
+        else:
+            st.table(df_artilheiros[["Jogador", "Gols"]])
+
+        # 📌 Exibir Ranking de Pontos (Ordenado por pontos, vitórias e depois gols)
+        st.subheader("📊 Ranking de Pontos e V/E/D")
+        df_pontos = df.sort_values(by=["Pontos", "Vitórias", "Gols"], ascending=False)
+        df_pontos["V/E/D"] = (
+            df_pontos["Vitórias"].astype(str)
+            + "/"
+            + df_pontos["Empates"].astype(str)
+            + "/"
+            + df_pontos["Derrotas"].astype(str)
         )
-    return None
 
-
-# 📌 Atualizar Ranking Automaticamente
-def atualizar_ranking():
-    dados_processados = processar_dados()
-    atualizar_gols_jogadores(dados_processados)
-    atualizar_pontos_jogadores(dados_processados)
+        st.table(df_pontos[["Jogador", "Pontos", "V/E/D"]])
+    else:
+        st.error("🚨 Erro: Colunas esperadas não encontradas no DataFrame.")
 
 
 # 📌 Interface do Streamlit
 st.title("⚽ Estatísticas da Pelada")
 
-# 📌 Botão para atualizar ranking
-if st.button("🔄 Atualizar Rankings"):
-    atualizar_ranking()
-    st.success("✅ Ranking atualizado!")
+# 📌 Carregar ranking do banco de dados
+df = carregar_ranking()
 
-# 📌 Carregar dados do ranking
-df = carregar_dados()
-
+# 📌 Exibir os rankings apenas se houver dados
 if df is not None:
-    # 📌 Exibir Ranking de Artilheiros (Apenas jogadores com gols > 0)
-    st.subheader("🏆 Ranking de Artilheiros")
-    df_artilheiros = df[df["Gols"] > 0].sort_values(by="Gols", ascending=False)
-
-    if df_artilheiros.empty:
-        st.info("Nenhum jogador marcou gols ainda.")
-    else:
-        st.table(df_artilheiros[["Jogador", "Gols"]])
-
-    # 📌 Exibir Ranking de Pontos (Ordenado por pontos, vitórias e depois gols)
-    st.subheader("📊 Ranking de Pontos e V/E/D")
-    df_pontos = df.sort_values(by=["Pontos", "Vitórias", "Gols"], ascending=False)
-    df_pontos["V/E/D"] = (
-        df_pontos["Vitórias"].astype(str)
-        + "/"
-        + df_pontos["Empates"].astype(str)
-        + "/"
-        + df_pontos["Derrotas"].astype(str)
+    exibir_ranking(df)
+else:
+    st.warning(
+        "📌 Nenhuma estatística disponível. Execute o processamento de jogos primeiro."
     )
-
-    st.table(df_pontos[["Jogador", "Pontos", "V/E/D"]])
