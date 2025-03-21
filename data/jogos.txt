@@ -3,7 +3,7 @@ data: 14/03/2025
 
 times: 3
 ---
-# Time 1 - Vermelho
+# Time 1 - vermelho
 rafael
 joarez
 jhonny (2)
@@ -11,7 +11,7 @@ pedrow (1)
 julianor
 tiago (1)
 ---
-# Time 2 - Azul
+# Time 2 - azul
 juarez
 luan (1)
 andre (1)
@@ -19,7 +19,7 @@ pedroc (2)
 fernandoc
 amir (1)
 ---
-# Time 3 - Verde
+# Time 3 - verde
 albert
 dudu
 vinicius

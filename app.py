@@ -1,31 +1,48 @@
+import os
 import sqlite3
 
 import pandas as pd
 import streamlit as st
 
-# 📌 Definir caminho do banco de dados e CSS
-db_path = "data/dados.db"
-css_path = "styles.css"
+# ----------------------------------------------------
+# 📌 Caminhos dos arquivos (ajuste se necessário)
+DB_PATH = "data/dados.db"
+CSS_PATH = "styles.css"
+JOGOS_PATH = "data/jogos.txt"
 
-
+# ----------------------------------------------------
+# 📌 1. Carrega o estilo CSS
 def carregar_estilo():
     """
-    📌 Carrega o arquivo CSS para estilizar as tabelas no Streamlit.
+    Carrega o arquivo CSS para estilizar as tabelas no Streamlit.
     """
-    with open(css_path, "r") as f:
-        css = f"<style>{f.read()}</style>"
-    st.markdown(css, unsafe_allow_html=True)
+    if os.path.exists(CSS_PATH):
+        with open(CSS_PATH, "r") as f:
+            css = f"<style>{f.read()}</style>"
+        st.markdown(css, unsafe_allow_html=True)
+    else:
+        st.warning(f"⚠️ Arquivo de estilo '{CSS_PATH}' não encontrado.")
 
 
+# ----------------------------------------------------
+# 📌 2. Carrega o ranking do banco de dados
 def carregar_ranking():
     """
-    📌 Carrega os rankings dos jogadores do banco de dados.
+    Lê o ranking (estatísticas dos jogadores) do banco de dados.
+    Retorna um DataFrame com colunas renomeadas para exibição.
     """
-    conn = sqlite3.connect(db_path)
+    if not os.path.exists(DB_PATH):
+        st.warning("⚠️ Banco de dados não encontrado.")
+        return None
+
+    conn = sqlite3.connect(DB_PATH)
     df = pd.read_sql_query("SELECT * FROM rankings", conn)
     conn.close()
 
-    # 📌 Renomear colunas para exibição correta
+    if df.empty:
+        return None
+
+    # Renomear colunas para exibição
     df.rename(
         columns={
             "jogador": "Jogador",
@@ -37,8 +54,11 @@ def carregar_ranking():
         },
         inplace=True,
     )
+    return df
 
-    return df if not df.empty else None
+
+# ----------------------------------------------------
+# 📌 3. Exibe o ranking (artilharia e pontos)
 
 
 def exibir_tabela_estilizada(df, colunas, titulo):
@@ -103,14 +123,44 @@ def exibir_ranking(df):
     )
 
 
-# 📌 Interface do Streamlit
-st.title("🏆  Estatísticas da Pelega de Sextas")
+# ----------------------------------------------------
+# 📌 4. Lê o conteúdo do arquivo 'jogos.txt'
+def carregar_historico_arquivo():
+    """
+    Lê o arquivo 'data/jogos.txt' e retorna o texto inteiro.
+    """
+    if not os.path.exists(JOGOS_PATH):
+        return "⚠️ O arquivo de jogos não foi encontrado."
 
-# 📌 Carregar estilo CSS
-carregar_estilo()
+    with open(JOGOS_PATH, "r", encoding="utf-8") as file:
+        return file.read()
 
-# 📌 Carregar ranking do banco de dados
-df = carregar_ranking()
 
-# 📌 Exibir os rankings apenas se houver dados
-exibir_ranking(df)
+# ----------------------------------------------------
+# 📌 Início da aplicação Streamlit
+def main():
+    # Criar abas
+    aba_ranking, aba_historico = st.tabs(["📊 Ranking", "📜 Histórico de Jogos"])
+
+    with aba_ranking:
+        st.title("🏆 Estatísticas da Pelega de Sextas")
+        carregar_estilo()  # Aplica CSS, se existir
+
+        df = carregar_ranking()
+        exibir_ranking(df)
+
+    with aba_historico:
+        st.title("📜 Histórico de Jogos")
+
+        # Ler o conteúdo do arquivo
+        historico_texto = carregar_historico_arquivo()
+
+        # Exibir o conteúdo do arquivo como texto puro
+        # Usando Markdown com ``` para exibir como bloco de código
+        st.markdown(f"```\n{historico_texto}\n```")
+
+
+# ----------------------------------------------------
+# Executar a função principal no Streamlit
+if __name__ == "__main__":
+    main()
