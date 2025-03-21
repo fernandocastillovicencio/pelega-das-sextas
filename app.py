@@ -1,7 +1,12 @@
+import os
 import sqlite3
 
 import pandas as pd
 import streamlit as st
+
+os.system("pip install matplotlib")
+# os.system("pip install matplotlib")
+
 
 # 📌 Definir caminho do banco de dados e CSS
 db_path = "data/dados.db"
