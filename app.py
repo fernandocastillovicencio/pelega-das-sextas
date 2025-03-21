@@ -6,6 +6,9 @@ import streamlit as st
 
 os.system("pip install matplotlib")
 # os.system("pip install matplotlib")
+import subprocess
+
+subprocess.run(["pip", "install", "matplotlib"])
 
 
 # 📌 Definir caminho do banco de dados e CSS
