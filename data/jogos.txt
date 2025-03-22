@@ -26,7 +26,6 @@ vinicius
 bill (1)
 vitor (2)
 ---
-
 jogos:
 azul 1 - vermelho 2
 verde 0 - vermelho 2
@@ -34,3 +33,31 @@ verde 2 - azul 3
 vermelho 0 - azul 0
 vermelho 1 - verde 0 
 azul 2 - verde 0
+
+# ---------------------------------------------------------------------------- #
+data: 21/03/2025
+times: 2
+---
+# Time 1 - Vermelho
+rafael
+juarez
+andre (2)
+pedrow (1)
+jhonny (1)
+dudu
+marcoscareca
+bill
+amir
+---
+# Time 2 - Azul
+edson
+joarez (2)
+vinicius
+pedroc (2)
+albert
+fernandoc
+vitor
+tiago
+---
+jogos:
+vermelho 4 - azul 4
