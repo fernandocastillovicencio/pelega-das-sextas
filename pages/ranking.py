@@ -92,7 +92,7 @@ def exibir_ranking():
         + "/"
         + df_pontos["Derrotas"].astype(str)
     )
-    exibir_tabela_estilizada(df_pontos, ["Jogador", "Pontos", "V/E/D"], "📊 Pontos")
+    exibir_tabela_estilizada(df_pontos, ["Jogador", "Pontos", "V/E/D"], "📊 Pontuação")
 
     # 📌 Nota sobre a pontuação
     st.markdown(

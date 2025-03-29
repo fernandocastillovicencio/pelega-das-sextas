@@ -61,3 +61,29 @@ tiago
 ---
 jogos:
 vermelho 4 - azul 4
+
+# ---------------------------------------------------------------------------- #
+data: 28/03/2025
+times: 2
+---
+# Time 1 - Vermelho
+rafael
+joao
+pedroc (2)
+pedrow (1)
+vinicius
+tiago (1)
+fernandoc
+joarez (0)
+---
+# Time 2 - Azul
+juarez
+edson
+albert (1)
+jhonny (2)
+dudu (1)
+vitor (1)
+amir (1)
+---
+jogos:
+vermelho 4 - azul 6
