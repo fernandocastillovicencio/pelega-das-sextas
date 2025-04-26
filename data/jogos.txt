@@ -87,3 +87,86 @@ amir (1)
 ---
 jogos:
 vermelho 4 - azul 6
+
+# ---------------------------------------------------------------------------- #
+data: 04/04/2025
+
+times: 2
+---
+# Time 1 - Vermelho
+rafael
+edson
+pedrow (1)
+joarez (1)
+dudu (2)
+albert (2)
+amir
+---
+# Time 2 - Azul
+joao
+vinicius
+pedroc
+jhonny (2)
+vitor
+fernandoc (1)
+bill (3)
+---
+
+jogos:
+vermelho 7 - azul 6
+
+# ---------------------------------------------------------------------------- #
+data: 11/04/2025
+
+times: 2
+---
+# Time 1 - Vermelho
+joao
+rafael
+dudu (3)
+albert
+pedroc (2)
+jhonny (2)
+amir (1)
+fernandoc
+---
+# Time 2 - Azul
+juarez
+edson
+andre (1)
+vinicius
+joarez (1)
+pedrow
+guto (2)
+vitor (1)
+---
+
+jogos:
+vermelho 8 - azul 5
+
+# ---------------------------------------------------------------------------- #
+data: 25/04/2025
+
+times: 2
+---
+# Time 1 - Vermelho
+rafael
+joarez (2)
+jhonny (3)
+guto
+albert
+marcoscareca
+vitor (1)
+---
+# Time 2 - Azul
+juarez
+edson
+pedroc (4)
+dudu (2)
+andre
+fernandoc
+amir (2)
+---
+
+jogos:
+vermelho 6 - azul 8
